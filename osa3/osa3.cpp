@@ -1,4 +1,4 @@
-﻿#include<vector>
+#include<vector>
 #include<iostream>
 #include<list>
 #include<iterator>
@@ -13,15 +13,15 @@ private:
     vector<int> marks;
 
 public:
-    void addMark(int mark) {
+    void add_mark(int mark) {
         marks.push_back(mark);
     }
 
-    vector<int> getMarks() {
+    vector<int> get_mark() {
         return marks;
     }
-    
-    float getAvg() {
+
+    float get_average() {
         float sum = 0;
         for (int i = 0; i < marks.size(); i++) {
             sum += marks[i];
@@ -29,7 +29,7 @@ public:
         return sum / marks.size();
     }
 
-    int getValue() {
+    int get_value_of_marks() {
         return marks.size();
     }
 };
@@ -42,30 +42,29 @@ public:
     Person(string name, Marks marks) {
         this->name = name; this->marks = marks;
     }
-    Person() {}
+    Person() { name = ""; }
 
-    Person getP() {
+    Person get_person() {
         return *this;
     }
 
-    string getName() {
+    string get_name() {
         return name;
     }
 
-    Marks getMarks() {
+    Marks get_mark() {
         return marks;
     }
 };
 
-struct pers4list { 
-    Person p; 
-    pers4list* before; 
-    pers4list* next; 
+struct pers4list {
+    Person p;
+    pers4list *prev, *next;
 
     pers4list* searchByName(string name) {
         pers4list* current = this;
         for (; current != nullptr; current = current->next) {
-            if (current->p.getName() == name) {
+            if (current->p.get_name() == name) {
                 return current;
             }
         }
@@ -75,17 +74,17 @@ struct pers4list {
 
 class List {
 private:
-    pers4list *first, *last;
+    pers4list* first, * last;
 public:
     List() {
         first = nullptr;
         last = nullptr;
     }
 
-    void addBack(Person p) {
+    void add_back(Person p) {
         pers4list* p4l = new pers4list;
         p4l->p = p;
-        p4l->before = last;
+        p4l->prev = last;
         p4l->next = nullptr;
         if (last != nullptr) {
             last->next = p4l;
@@ -96,13 +95,13 @@ public:
         }
     }
 
-    void addFront(Person p) {
-        pers4list* p4l =  new pers4list;
+    void add_front(Person p) {
+        pers4list* p4l = new pers4list;
         p4l->p = p;
-        p4l->before = nullptr;
+        p4l->prev = nullptr;
         p4l->next = first;
         if (first != nullptr) {
-            first->before = p4l;
+            first->prev = p4l;
         }
         first = p4l;
         if (last == nullptr) {
@@ -110,21 +109,26 @@ public:
         }
     }
 
-    bool addAfter(Person p, pers4list* p4l) {
-        if (p4l == nullptr) { return false; }
+    bool addAfter(Person p, int index) {
+        pers4list* current = first;
+        for (; index > 0 && current != nullptr; index--) {
+            current = current->next;
+        }
+        if (current == nullptr) { return false; }
         pers4list* p4lNew = new pers4list;
         p4lNew->p = p;
-        p4lNew->next = p4l->next;
-        p4lNew->before = p4l;
-        p4l->next = p4lNew;
+        p4lNew->next = current->next;
+        p4lNew->prev = current;
+        current->next = p4lNew;
+        return true;
     }
 
-    bool delBack() {
+    bool remove_back() {
         pers4list* p4l;
         if (last == nullptr) {
             return false;
         }
-        p4l = last->before;
+        p4l = last->prev;
         if (p4l != nullptr) {
             p4l->next = nullptr;
         }
@@ -136,14 +140,14 @@ public:
         return true;
     }
 
-    bool delFront() {
+    bool remove_front() {
         pers4list* p4l;
         if (first == nullptr) {
             return false;
         }
         p4l = first->next;
         if (p4l != nullptr) {
-            p4l->before = nullptr;                   
+            p4l->prev = nullptr;
         }
         else {
             last = nullptr;
@@ -153,22 +157,28 @@ public:
         return true;
     }
 
-    pers4list* searchByName(string name) {
+    vector<int> searchByName(string name) {
+        vector<int> v;
         pers4list* current = first;
-        for (; current != nullptr; current = current->next) {
-            if (current->p.getName() == name) {
-                return current;
+        for (int i = 0; current != nullptr; i++) {
+            if (current->p.get_name() == name) {
+                v.push_back(i);
             }
+            current = current->next;
         }
-        return nullptr;
+        return v;
     }
 
-    pers4list* getItem(int index) {
+    Person getItem(int index) {
         pers4list* current = first;
-        for (; index > 0 && current != nullptr; index--) {
+        for (; index > 0 ; index--) {
             current = current->next;
-        } 
-        return current;
+        }
+        if (current == nullptr) {
+            Person p;
+            return p;
+        }
+        return current->p;
     }
 };
 
@@ -177,84 +187,83 @@ Person persCreator() {
     int mark;
     while (1) {
         string name;
-        cout << "Введите оценку: ";
+        cout << "Введите оценку (0 для прекращения ввода оценок): ";
         cin >> mark;
         if (mark == 0) {
             cout << "Введите имя: ";
             cin >> name;
+            cout << endl;
             Person p(name, marks);
             pers4list p4l;
             p4l.p = p;
             return (p);
         }
-        marks.addMark(mark);
+        marks.add_mark(mark);
     }
 }
 
-void printV(vector<Person> v) {
+void printV(vector<int> v) {
     for (int i = 0; i < v.size(); i++) {
-        std::cout << v[i].getName() << endl << v[i].getMarks().getAvg() << endl;
-        for (int q = 0; q < v[i].getMarks().getMarks().size(); q++) {
-            std::cout << v[i].getMarks().getMarks()[q] << " ";
-        }
-        std::cout << endl << endl;
+        cout << v[i] << " ";
     }
+    cout << endl << endl;
 }
 
-void printP(pers4list v) {
-    std::cout << v.p.getName() << endl << v.p.getMarks().getAvg() << endl;
-        for (int q = 0; q < v.p.getMarks().getMarks().size(); q++) {
-            std::cout << v.p.getMarks().getMarks()[q] << " ";
-        }
-        std::cout << endl << endl;
-}
-
-int main()
+int main(int count, char** params)
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    int worknum;
+    int counter;
     List data;
-    while (1) {
-        cin >> worknum;
-        switch (worknum) {
-        case 1:
-            data.addBack(persCreator());
-            break;
-        case 2:
-            data.addFront(persCreator());
-            break;
-        case 3:
-            data.delBack();
-            break;
-        case 4:
-            data.delFront();
-            break;
-        case 5:
-            for (pers4list* p4l = data.getItem(0); p4l != nullptr; p4l = p4l->next) {
-                cout << p4l->p.getName() << ", Ср. Оценка: " << p4l->p.getMarks().getAvg() << endl;
+    for (counter = 1; counter < count; counter++) {
+        if (string(params[counter]) == "add") {
+            counter += 1;
+            if (string(params[counter]) == "back") {
+                data.add_back(persCreator());
             }
-            break;
-        case 6:
-        {
-            string name;
+            else if (string(params[counter]) == "front") {
+                data.add_front(persCreator());
+            }
+            else {
+                cout << "Неверный выбор места добавления элемента.";
+            }
+        }
+        else if (string(params[counter]) == "remove") {
+            counter += 1;
+            if (string(params[counter]) == "back") {
+                data.remove_back();
+            }
+            else if (string(params[counter]) == "front") {
+                data.remove_front();
+            }
+            else {
+                cout << "Неверный выбор удаления добавления элемента.";
+            }
+        }
+        else if (string(params[counter]) == "show") {
+            Person p;
+            for (int i = 0; data.getItem(i).get_name() != ""; i++) {
+                cout << data.getItem(i).get_name() << ", Ср. Оценка: "
+                    << data.getItem(i).get_mark().get_average() << endl;
+                printV(data.getItem(i).get_mark().get_mark());
+            }
+        }
+        else if (string(params[counter]) == "search") {
+            counter += 1;
             char yn;
-            cout << "Введите имя: ";
-            cin >> name;
-            pers4list* p4l = data.searchByName(name);
-            while (p4l != nullptr) {
-                cout << p4l->p.getName() << ", Ср. Оценка: " << p4l->p.getMarks().getAvg() << endl;
+            vector<int> v;
+            v = data.searchByName(string(params[counter]));
+            Person p;
+            for (vector<int>::iterator iterator = v.begin(); iterator != v.end(); iterator++) {
+                p = data.getItem(*iterator);
+                cout << p.get_name() << ", Ср. Оценка: " << p.get_mark().get_average() << endl;
                 cout << "Вставить новый элемент? (y/n)";
                 cin >> yn;
                 if (yn == 'y') {
-                    data.addAfter(persCreator(), p4l);
-                }
-                p4l = p4l->next;
-                if (p4l != nullptr) {
-                    p4l = p4l->searchByName(name);
+                    data.addAfter(persCreator(), *iterator);
                 }
             }
         }
-        }
     }
+    return 0;
 }
