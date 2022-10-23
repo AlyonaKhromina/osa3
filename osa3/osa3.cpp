@@ -60,16 +60,6 @@ public:
 struct pers4list {
     Person p;
     pers4list *prev, *next;
-
-    pers4list* searchByName(string name) {
-        pers4list* current = this;
-        for (; current != nullptr; current = current->next) {
-            if (current->p.get_name() == name) {
-                return current;
-            }
-        }
-        return nullptr;
-    }
 };
 
 class List {
