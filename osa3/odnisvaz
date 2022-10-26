@@ -1,4 +1,4 @@
-#include<vector>
+##include<vector>
 #include<iostream>
 #include<list>
 #include<iterator>
@@ -13,15 +13,15 @@ private:
     vector<int> marks;
 
 public:
-    void add_mark(int mark) {
+    void add(int mark) {
         marks.push_back(mark);
     }
 
-    vector<int> get_mark() {
+    vector<int> get() {
         return marks;
     }
 
-    float get_average() {
+    float avg() {
         float sum = 0;
         for (int i = 0; i < marks.size(); i++) {
             sum += marks[i];
@@ -29,22 +29,22 @@ public:
         return sum / marks.size();
     }
 
-    int get_value_of_marks() {
+    int size() {
         return marks.size();
     }
 };
 
-class Person {
+class character {
 private:
     string name;
     Marks marks;
 public:
-    Person(string name, Marks marks) {
+    character(string name, Marks marks) {
         this->name = name; this->marks = marks;
     }
-    Person() { name = ""; }
+    character() { name = ""; }
 
-    Person get_person() {
+    character get_person() {
         return *this;
     }
 
@@ -52,74 +52,96 @@ public:
         return name;
     }
 
-    Marks get_mark() {
+    Marks get() {
         return marks;
     }
 };
 
-struct pers4list {
-    Person p;
-    pers4list * next;
+struct strct {
+    character p;
+    strct *prev, *next;
 };
 
 class List {
 private:
-    pers4list* first;
+    strct* first, * last;
 public:
     List() {
         first = nullptr;
+        last = nullptr;
     }
 
-    void add_back(Person p) {
-        pers4list* p4l = new pers4list;
+    void add_back(character p) {
+        strct* p4l = new strct;
         p4l->p = p;
+        p4l->prev = last;
         p4l->next = nullptr;
+        if (last != nullptr) {
+            last->next = p4l;
+        }
+        last = p4l;
         if (first == nullptr) {
             first = p4l;
         }
     }
 
-    void add_front(Person p) {
-        pers4list* p4l = new pers4list;
+    void add_front(character p) {
+        strct* p4l = new strct;
         p4l->p = p;
+        p4l->prev = nullptr;
         p4l->next = first;
+        if (first != nullptr) {
+            first->prev = p4l;
+        }
         first = p4l;
+        if (last == nullptr) {
+            last = p4l;
+        }
     }
 
-    bool addAfter(Person p, int index) {
-        pers4list* current = first;
+    bool addAfter(character p, int index) {
+        strct* current = first;
         for (; index > 0 && current != nullptr; index--) {
             current = current->next;
         }
         if (current == nullptr) { return false; }
-        pers4list* p4lNew = new pers4list;
+        strct* p4lNew = new strct;
         p4lNew->p = p;
         p4lNew->next = current->next;
+        p4lNew->prev = current;
         current->next = p4lNew;
         return true;
     }
 
     bool remove_back() {
-        pers4list* p4l;
-        p4l = first;
-        while (p4l->next != nullptr) {
-            p4l = p4l->next;
+        strct* p4l;
+        if (last == nullptr) {
+            return false;
         }
+        p4l = last->prev;
         if (p4l != nullptr) {
             p4l->next = nullptr;
         }
         else {
             first = nullptr;
         }
+        delete(last);
+        last = p4l;
         return true;
     }
 
     bool remove_front() {
-        pers4list* p4l;
+        strct* p4l;
         if (first == nullptr) {
             return false;
         }
         p4l = first->next;
+        if (p4l != nullptr) {
+            p4l->prev = nullptr;
+        }
+        else {
+            last = nullptr;
+        }
         delete(first);
         first = p4l;
         return true;
@@ -127,7 +149,7 @@ public:
 
     vector<int> searchByName(string name) {
         vector<int> v;
-        pers4list* current = first;
+        strct* current = first;
         for (int i = 0; current != nullptr; i++) {
             if (current->p.get_name() == name) {
                 v.push_back(i);
@@ -137,20 +159,20 @@ public:
         return v;
     }
 
-    Person getItem(int index) {
-        pers4list* current = first;
-        for (; index > 0; index--) {
+    character getItem(int index) {
+        strct* current = first;
+        for (; index > 0 ; index--) {
             current = current->next;
         }
         if (current == nullptr) {
-            Person p;
+            character p;
             return p;
         }
         return current->p;
     }
 };
 
-Person persCreator() {
+character creator() {
     Marks marks;
     int mark;
     while (1) {
@@ -161,12 +183,12 @@ Person persCreator() {
             cout << "Введите имя: ";
             cin >> name;
             cout << endl;
-            Person p(name, marks);
-            pers4list p4l;
+            character p(name, marks);
+            strct p4l;
             p4l.p = p;
             return (p);
         }
-        marks.add_mark(mark);
+        marks.add(mark);
     }
 }
 
@@ -177,61 +199,62 @@ void printV(vector<int> v) {
     cout << endl << endl;
 }
 
-int main(int count, char** params)
+int main()
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    int counter;
+    int counter, temp;
     List data;
-    for (counter = 1; counter < count; counter++) {
-        if (string(params[counter]) == "add") {
-            counter += 1;
-            if (string(params[counter]) == "back") {
-                data.add_back(persCreator());
-            }
-            else if (string(params[counter]) == "front") {
-                data.add_front(persCreator());
-            }
-            else {
-                cout << "Неверный выбор места добавления элемента.";
-            }
-        }
-        else if (string(params[counter]) == "remove") {
-            counter += 1;
-            if (string(params[counter]) == "back") {
-                data.remove_back();
-            }
-            else if (string(params[counter]) == "front") {
-                data.remove_front();
-            }
-            else {
-                cout << "Неверный выбор удаления добавления элемента.";
-            }
-        }
-        else if (string(params[counter]) == "show") {
-            Person p;
+    while (1) {
+        switch (temp) {
+        case 1:
+            data.add_back(creator());
+            break;
+        case 2:
+            data.add_front(creator());
+            break;
+        case 3:
+            data.remove_back();
+            break;
+        case 4:
+            data.remove_back();
+            break;
+        case 5:
+            data.remove_front();
+            break;
+        case 6:
+        {
+            character p;
             for (int i = 0; data.getItem(i).get_name() != ""; i++) {
                 cout << data.getItem(i).get_name() << ", Ср. Оценка: "
-                    << data.getItem(i).get_mark().get_average() << endl;
-                printV(data.getItem(i).get_mark().get_mark());
+                    << data.getItem(i).get().avg() << endl;
+                printV(data.getItem(i).get().get());
             }
         }
-        else if (string(params[counter]) == "search") {
+        break;
+        case 7:
+        {
             counter += 1;
-            char yn;
+            char yes_or_not;
             vector<int> v;
-            v = data.searchByName(string(params[counter]));
-            Person p;
+            cout << "Введите имя: ";
+            string name;
+            cin >> name;
+            v = data.searchByName(name);
+            character p;
             for (vector<int>::iterator iterator = v.begin(); iterator != v.end(); iterator++) {
                 p = data.getItem(*iterator);
-                cout << p.get_name() << ", Ср. Оценка: " << p.get_mark().get_average() << endl;
+                cout << p.get_name() << ", Ср. Оценка: " << p.get().avg() << endl;
                 cout << "Вставить новый элемент? (y/n)";
-                cin >> yn;
-                if (yn == 'y') {
-                    data.addAfter(persCreator(), *iterator);
+                cin >> yes_or_not;
+                if (yes_or_not == 'y') {
+                    data.addAfter(creator(), *iterator);
                 }
             }
         }
+        break;
+        case 8:
+            return 0;
+        }
     }
-    return 0;
 }
