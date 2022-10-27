@@ -1,4 +1,4 @@
-##include<vector>
+#include<vector>
 #include<iostream>
 #include<list>
 #include<iterator>
@@ -59,7 +59,7 @@ public:
 
 struct strct {
     character p;
-    strct *prev, *next;
+    strct* prev, * next;
 };
 
 class List {
@@ -161,7 +161,7 @@ public:
 
     character getItem(int index) {
         strct* current = first;
-        for (; index > 0 ; index--) {
+        for (; index > 0; index--) {
             current = current->next;
         }
         if (current == nullptr) {
@@ -203,9 +203,11 @@ int main()
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    int counter, temp;
+    int temp;
     List data;
     while (1) {
+        cout << "Введите номер работы: ";
+        cin >> temp;
         switch (temp) {
         case 1:
             data.add_back(creator());
@@ -234,7 +236,6 @@ int main()
         break;
         case 7:
         {
-            counter += 1;
             char yes_or_not;
             vector<int> v;
             cout << "Введите имя: ";
