@@ -13,15 +13,15 @@ private:
     vector<int> marks;
 
 public:
-    void add_mark(int mark) {
+    void add_mark(int mark) { // добавляет оценку в конец
         marks.push_back(mark);
     }
 
-    vector<int> get_mark() {
+    vector<int> get_mark() { // возвращает вектор оценок
         return marks;
     }
 
-    float get_average() {
+    float get_average() { // возвращает среднее значение
         float sum = 0;
         for (int i = 0; i < marks.size(); i++) {
             sum += marks[i];
@@ -29,7 +29,7 @@ public:
         return sum / marks.size();
     }
 
-    int get_value_of_marks() {
+    int get_value_of_marks() { // возвращает количество оценок
         return marks.size();
     }
 };
@@ -39,84 +39,84 @@ private:
     string name;
     Marks marks;
 public:
-    character(string name, Marks marks) {
-        this->name = name; this->marks = marks;
+    character(string name, Marks marks) {  // конструктор
+        this->name = name; this->marks = marks; 
     }
-    character() { name = ""; }
+    character() { name = ""; } // конструктор по умолчанию (создаётся пустое имя для проверки в ... где то )
 
-    character get_person() {
+    character get_person() { // возвращает себя
         return *this;
     }
 
-    string get_name() {
+    string get_name() { // возврашает имя
         return name;
     }
 
-    Marks get_mark() {
+    Marks get_mark() { //возвращает оценки (объект типа mark!!!)
         return marks;
     }
 };
 
-struct pers4list {
-    character p;
-    pers4list * next;
+struct pers4list { // структура, с которой работает список
+    character p; // все данные
+    pers4list * next; // указатель на следующий элемент
 };
 
 class List {
 private:
-    pers4list* first;
+    pers4list* first; // переименуй на хедер
 public:
     List() {
-        first = nullptr;
+        first = nullptr; // надо будет для проверки и в принципе с этим работать круто он классный, ахуенный обалденный
     }
 
     void add_back(character p) {
-        pers4list* p4l = new pers4list;
-        p4l->p = p;
-        p4l->next = nullptr;
-        if (first == nullptr) {
-            first = p4l;
+        pers4list* p4l = new pers4list; // p4l переименуй, создали элемент
+        p4l->p = p; // записали данные
+        p4l->next = nullptr; // уверенно сделали следующий элемент нулптром
+        if (first == nullptr) { // проверели первый ли это элемент в списке
+            first = p4l; 
         }
     }
 
     void add_front(character p) {
-        pers4list* p4l = new pers4list;
-        p4l->p = p;
-        p4l->next = first;
-        first = p4l;
+        pers4list* p4l = new pers4list; // уверенно создали 
+        p4l->p = p; // записали данные
+        p4l->next = first; // следующий элемент для нашего нового элемента - это первый элемент
+        first = p4l; // теперь новый элемент - первый элемент
     }
 
-    bool addAfter(character p, int index) {
+    bool addAfter(character p, int index) { //добавляет по после найденного
         pers4list* current = first;
-        for (; index > 0 && current != nullptr; index--) {
+        for (; index > 0 && current != nullptr; index--) { // бежим по списку 
             current = current->next;
         }
-        if (current == nullptr) { return false; }
+        if (current == nullptr) { return false; } // проверяем куда пришли
         pers4list* p4lNew = new pers4list;
-        p4lNew->p = p;
-        p4lNew->next = current->next;
-        current->next = p4lNew;
+        p4lNew->p = p; // записываем данные в новый элемент
+        p4lNew->next = current->next; // указатель на следующий у нового равен указателю старого 
+        current->next = p4lNew; // указатель старого указывает теперь на новый элемент
         return true;
     }
 
-    bool remove_back() {
-        pers4list* p4l;
-        p4l = first;
-        while (p4l->next != nullptr) {
+    bool remove_back() { // удаляем с конца
+        pers4list* p4l; // создали новый УКАЗАТЕЛЬ!!!
+        p4l = first; // p4l находится в нулевой точке (указывает на первый элемент)
+        while (p4l->next != nullptr) { // бежим по списку
             p4l = p4l->next;
         }
-        if (p4l != nullptr) {
-            p4l->next = nullptr;
+        if (p4l != nullptr) { // в случае, если список не пустой
+            p4l->next = nullptr; // удаляем последний элемент
         }
         else {
-            first = nullptr;
+            first = nullptr; 
         }
         return true;
     }
 
-    bool remove_front() {
+    bool remove_front() { 
         pers4list* p4l;
-        if (first == nullptr) {
+        if (first == nullptr) { // проверка на пустой список
             return false;
         }
         p4l = first->next;
@@ -125,32 +125,32 @@ public:
         return true;
     }
 
-    vector<int> searchByName(string name) {
+    vector<int> searchByName(string name) { // поиск элемента
         vector<int> v;
-        pers4list* current = first;
+        pers4list* current = first; // создаём указатель на первый элемент
         for (int i = 0; current != nullptr; i++) {
-            if (current->p.get_name() == name) {
+            if (current->p.get_name() == name) { // ищет имя с совпадением, записывает номер элемента в вектор
                 v.push_back(i);
             }
-            current = current->next;
+            current = current->next; // сдвигаем каррент
         }
-        return v;
+        return v; // возвращаем вектор с номерами элементов
     }
 
-    character getItem(int index) {
+    character getItem(int index) { // нахождение элемента по индексу
         pers4list* current = first;
-        for (; index > 0; index--) {
+        for (; index > 0; index--) { // бежим по списку до нашего индекса
             current = current->next;
         }
-        if (current == nullptr) {
-            character p;
+        if (current == nullptr) { //проверяем не пустой ли элемент мы нашли
+            character p; // если да, то возвращается p c именем ""
             return p;
         }
-        return current->p;
+        return current->p; // возвращаем данные каррента, то есть объект типа character
     }
 };
 
-character persCreator() {
+character persCreator() { // создаёт новую персону
     Marks marks;
     int mark;
     while (1) {
@@ -161,29 +161,31 @@ character persCreator() {
             cout << "Введите имя: ";
             cin >> name;
             cout << endl;
-            character p(name, marks);
-            pers4list p4l;
-            p4l.p = p;
+            character p(name, marks); //создаём объект с помощью коструктора
+            //pers4list p4l;
+            //p4l.p = p;
             return (p);
         }
-        marks.add_mark(mark);
+        marks.add_mark(mark); // добавление оценки в вектор
     }
 }
 
-void printV(vector<int> v) {
+void printV(vector<int> v) { // выводит интовый вектор оценок
     for (int i = 0; i < v.size(); i++) {
         cout << v[i] << " ";
     }
     cout << endl << endl;
-}
+}      
 
 int main()
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    int counter, temp;
+    int temp;
     List data;
     while (1) {
+        cout << "Введите номер работы: ";
+        cin >> temp;
         switch (temp) {
         case 1:
             data.add_back(persCreator());
@@ -212,7 +214,6 @@ int main()
         break;
         case 7:
         {
-            counter += 1;
             char yes_or_not;
             vector<int> v;
             cout << "Введите имя: ";
