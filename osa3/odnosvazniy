@@ -40,7 +40,7 @@ private:
     Marks marks;
 public:
     character(string name, Marks marks) {  // конструктор
-        this->name = name; this->marks = marks; 
+        this->name = name; this->marks = marks;
     }
     character() { name = ""; } // конструктор по умолчанию (создаётся пустое имя для проверки в ... где то )
 
@@ -59,7 +59,7 @@ public:
 
 struct pers4list { // структура, с которой работает список
     character p; // все данные
-    pers4list * next; // указатель на следующий элемент
+    pers4list* next; // указатель на следующий элемент
 };
 
 class List {
@@ -75,8 +75,13 @@ public:
         p4l->p = p; // записали данные
         p4l->next = nullptr; // уверенно сделали следующий элемент нулптром
         if (first == nullptr) { // проверели первый ли это элемент в списке
-            first = p4l; 
+            first = p4l;
         }
+        pers4list* current = first;
+        while (current->next != nullptr) { // бежим по списку, находим последний элемент
+            current = current->next;
+        }
+        current->next = p4l; // добавляем в последний элемент указатель на новый
     }
 
     void add_front(character p) {
@@ -109,12 +114,18 @@ public:
             p4l->next = nullptr; // удаляем последний элемент
         }
         else {
-            first = nullptr; 
+            first = nullptr;
         }
+        pers4list* current = first;
+        while (current->next != nullptr) { // бежим по списку, находим последний элемент
+            current = current->next;
+        }
+        delete(current->next); // удаляем последний элемент
+        current->next = nullptr;
         return true;
     }
 
-    bool remove_front() { 
+    bool remove_front() {
         pers4list* p4l;
         if (first == nullptr) { // проверка на пустой список
             return false;
@@ -175,7 +186,7 @@ void printV(vector<int> v) { // выводит интовый вектор оц�
         cout << v[i] << " ";
     }
     cout << endl << endl;
-}      
+}
 
 int main()
 {
@@ -188,21 +199,18 @@ int main()
         cin >> temp;
         switch (temp) {
         case 1:
-            data.add_back(persCreator());
+            data.add_back(persCreator()); // добавить в конец
             break;
         case 2:
-            data.add_front(persCreator());
+            data.add_front(persCreator()); // добавить в начало
             break;
         case 3:
-            data.remove_back();
+            data.remove_back(); // удалить последний
             break;
         case 4:
-            data.remove_back();
+            data.remove_front(); // удалить первый
             break;
-        case 5:
-            data.remove_front();
-            break;
-        case 6:
+        case 5: // вывести всё на экран
         {
             character p;
             for (int i = 0; data.getItem(i).get_name() != ""; i++) {
@@ -212,7 +220,7 @@ int main()
             }
         }
         break;
-        case 7:
+        case 6: // найти и вставить после найденного
         {
             char yes_or_not;
             vector<int> v;
@@ -232,7 +240,7 @@ int main()
             }
         }
         break;
-        case 8:
+        case 7: // закончить работу 
             return 0;
         }
     }
