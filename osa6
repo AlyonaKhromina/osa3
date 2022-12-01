@@ -1,0 +1,117 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits>
+#include<iostream>
+#include <vector>
+#include <numeric>
+
+const int MAX = 100000;
+
+class Graph {
+private:
+	int** connection_matrix; // матрица путей
+	int size;
+	int used_distance = 0; // сумма пути, который мы прошли
+
+	int new_top_founder(int* distance, int temp) { // передаём массив и вершину
+		for (int j = 0; j < size; j++) {
+			if (connection_matrix[j][temp] < distance[j]) {
+				distance[j] = connection_matrix[j][temp];
+			}
+		}
+
+		int min = MAX;
+		for (int k = 0; k < size; k++) { // находим коротчайший путь из массива
+			if (distance[k] < min && distance[k] != 0) {
+				min = k;
+				used_distance += distance[k]; // добавляем дистанцию, которую прошли
+			}
+		}
+		return min;
+	}
+
+public:
+	Graph(int size) {
+		this->size = size;
+		connection_matrix = new int* [size]; // создаём матрицу путей  
+		for (int i = 0; i < size; i++) {	
+			int* temp = new int[size]; // засовываем в матрицу путей массивы, чтобы была квадратная матрица
+			connection_matrix[i] = temp;
+		}
+	}
+
+	void connect_matrix_init(int i, int j, int arg) { // заполнение матрицы
+		connection_matrix[i][j] = arg;
+		connection_matrix[j][i] = arg;
+	}
+
+	int** get_connection_matrix() {
+		return connection_matrix; // возвращает матрицу
+	}
+
+	int get_shortest_distance(int top, int end) {
+		int temp = top;
+		int* distance = new int[size];
+		for (int i = 0; i < size; i++) { // создаём массив, каждый элемент которого MAX
+			distance[i] = MAX;
+		}
+
+		while (distance[end] == MAX) // если элемент с индексом конечной точки MAX, то выполняем, пока не перестанет быть таковым
+			temp = new_top_founder(distance, temp);
+		
+		return used_distance;
+	}
+};
+
+void print_matrix(int size, int** matrix) {
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+			if (i == j || matrix[i][j] == MAX) {
+				printf("    - ");
+			}
+			else {
+				printf("%5d ", matrix[i][j]);
+			}
+
+		printf("\n");
+	}
+}
+
+void print_array(int size, int* array) {
+	for (int i = 0; i < size; i++)
+		printf("%5d ", array[i]);
+}
+
+int main(int count, char** params)
+{
+	system("chcp 1251");
+
+	if (std::string(params[1]) == "help") {
+		std::cout << "<Количество N аргументов> <первый агрумент> <второй аргумент> ... "
+			<< "<Nый аргумент> <номер вершины от которой нужно найти путь> "
+			<< "<номер вершины до которой нужно найти путь>";
+	}
+
+	Graph g(atoi(params[1]));
+	int counter = 2;
+
+	for (int i = 0; i < atoi(params[1]); i++) //логика по заполнению матрицы
+	{
+		g.connect_matrix_init(i, i, 0);
+		for (int j = i + 1; j < atoi(params[1]); j++) {
+			g.connect_matrix_init(i, j, atoi(params[counter]));
+			g.connect_matrix_init(j, i, atoi(params[counter]));
+			counter++;
+		}
+	}
+	print_matrix(atoi(params[1]), g.get_connection_matrix());
+
+	std::cout << "Минимальный путь из вершины " << params[count - 2]
+		<< " до вершины " << params[count - 1] << " = " 
+		<< g.get_shortest_distance(atoi(params[count - 2]), atoi(params[count - 1])) << std::endl << std::endl;
+	
+	system("pause");
+	return 0;
+}
