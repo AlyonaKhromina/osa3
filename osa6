@@ -94,19 +94,19 @@ int main(int count, char** params)
 			<< "<номер вершины до которой нужно найти путь>";
 	}
 
-	Graph g(atoi(params[1]));
-	int counter = 2;
+	Graph g(atoi(params[2]));
+	int counter = 3;
 
-	for (int i = 0; i < atoi(params[1]); i++) //логика по заполнению матрицы
+	for (int i = 0; i < atoi(params[2]); i++) //логика по заполнению матрицы
 	{
 		g.connect_matrix_init(i, i, 0);
-		for (int j = i + 1; j < atoi(params[1]); j++) {
+		for (int j = i + 1; j < atoi(params[2]); j++) {
 			g.connect_matrix_init(i, j, atoi(params[counter]));
 			g.connect_matrix_init(j, i, atoi(params[counter]));
 			counter++;
 		}
 	}
-	print_matrix(atoi(params[1]), g.get_connection_matrix());
+	print_matrix(atoi(params[2]), g.get_connection_matrix());
 
 	std::cout << "Минимальный путь из вершины " << params[count - 2]
 		<< " до вершины " << params[count - 1] << " = " 
