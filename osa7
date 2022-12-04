@@ -1,0 +1,169 @@
+#include <iostream>
+
+using namespace std;
+
+struct item { 
+	int data;
+	item* next;
+	item* prev;
+};
+
+class queue {
+private:
+	item* first; 
+	item* last; 
+	int count; 
+public:
+	queue()
+	{
+		last = NULL;
+		first = NULL;
+		count = 0;
+	}
+	void add(int a) 
+	{
+		item* newitem = new item;
+		newitem->data = a;
+		if (first == NULL)
+			first = newitem;
+		newitem->next = NULL;
+		newitem->prev = last;
+		if (last != NULL)
+			last->next = newitem;
+		last = newitem;
+		count++;
+	}
+	void del_first() 
+	{
+		item* place = first;
+		if (place != last) 
+		{
+			place->next->prev = NULL;
+			first = place->next;
+		}
+		else
+		{
+		first = NULL;
+		last = NULL;
+		}
+		delete place;
+		count--;
+	}
+	bool empty() 
+	{
+		bool empt;
+		if (first == NULL)
+			empt = true;
+		else
+			empt = false;
+		return empt;
+	}
+	int first_data()
+	{
+		return first->data;
+	}
+};
+
+class Graph {
+	int** matrix;
+	bool* visited;
+	int* ways;
+	int start, end;
+	int size;
+
+public:
+	Graph(int N, int start, int end) {
+		int* temp = new int[N];
+		for (int i = 0; i < N; i++) {
+			temp[i] = 0;
+		}
+		matrix = new int*[N];
+		for (int j = 0; j < N; j++) {
+			matrix[j] = temp;
+		}
+		size = N;
+
+		visited = new bool[N];
+		ways = new int[N];
+		for (int u = 0; u < N; u++) {
+			ways[u] = 0;
+		}
+
+		this->start = start;
+		this->end = end;
+	}
+
+	void add_edge(int from, int to) {
+		matrix[from][to] = 1;
+	}
+
+	void test() {
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				cout << "  " << matrix[i][j] << "  ";
+			}
+			cout << endl;
+		}
+	}
+
+	void BFS() {
+		queue Que;
+		Que.add(start);
+		visited[start] = 1;
+		ways[start] = -1;
+		while (!Que.empty())
+		{
+			int unit = Que.first_data();
+			Que.del_first();
+			for (int i = 0; i < size; i++)
+			{
+				if ((visited[i] == 0) && (matrix[unit][i] == 1))
+				{
+					Que.add(i);
+					ways[i] = unit;
+					visited[i] = 1;
+				}
+			}
+		}
+		int dne = end;
+		int count = 0;
+		do {
+			count++;
+			dne = ways[dne];
+		} while (dne != ways[start]);
+		int* rev = new int[count];
+		int i = 0;
+		rev[i] = end;
+		i++;
+		do {
+			rev[i] = ways[end];
+			i++;
+			end = ways[end];
+		} while (end != start);
+		i--;
+		cout << "Путь: ";
+		while (i >= 0)
+		{
+			cout << rev[i] << " ";
+			i--;
+		}
+		cout << '\n';
+	}
+};
+
+int main()
+{
+
+	setlocale(LC_ALL, "");
+
+	Graph g(5, 0, 4);
+	g.add_edge(0, 1);
+	g.test();
+	g.add_edge(1, 2);
+	g.add_edge(2, 3);
+	g.add_edge(3, 4);
+	g.BFS();
+	
+	system("pause");
+	return 0;
+}
