@@ -73,17 +73,21 @@ class Graph {
 
 public:
 	Graph(int N, int start, int end) {
-		int* temp = new int[N];
-		for (int i = 0; i < N; i++) {
-			temp[i] = 0;
-		}
+		
 		matrix = new int*[N];
 		for (int j = 0; j < N; j++) {
+			int* temp = new int[N];
+			for (int i = 0; i < N; i++) {
+				temp[i] = 0;
+			}
 			matrix[j] = temp;
 		}
 		size = N;
 
 		visited = new bool[N];
+		for (int o = 0; o < N; o++) {
+			visited[o] = 0;
+		}
 		ways = new int[N];
 		for (int u = 0; u < N; u++) {
 			ways[u] = 0;
@@ -97,16 +101,7 @@ public:
 		matrix[from][to] = 1;
 	}
 
-	void test() {
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				cout << "  " << matrix[i][j] << "  ";
-			}
-			cout << endl;
-		}
-	}
-
-	void BFS() {
+	int* find_ways() {
 		queue Que;
 		Que.add(start);
 		visited[start] = 1;
@@ -131,38 +126,60 @@ public:
 			count++;
 			dne = ways[dne];
 		} while (dne != ways[start]);
-		int* rev = new int[count];
+		int* rev = new int[count + 1];
+		rev[0] = count;
 		int i = 0;
-		rev[i] = end;
+		rev[i + 1] = end;
 		i++;
 		do {
-			rev[i] = ways[end];
+			rev[i + 1] = ways[end];
 			i++;
 			end = ways[end];
 		} while (end != start);
-		i--;
-		cout << "Путь: ";
-		while (i >= 0)
-		{
-			cout << rev[i] << " ";
-			i--;
+		return rev;
+	}
+
+	void test() {
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				cout << "  " << matrix[i][j] << "  ";
+			}
+			cout << endl;
 		}
-		cout << '\n';
 	}
 };
 
-int main()
+void print(int* arr) {
+	for (int i = arr[0]; i > 0; i--) {
+		cout << arr[i] << " ";
+	}
+	cout << endl << endl;
+}
+
+int main(int count, char** params)
 {
 
 	setlocale(LC_ALL, "");
 
-	Graph g(5, 0, 4);
-	g.add_edge(0, 1);
+	Graph g(atoi(params[1]), atoi(params[2]), atoi(params[3]));
+
+	int counter = 4;
+	while (counter <= count - 1) {
+		if (string(params[counter]) == "add") {
+			g.add_edge(atoi(params[counter + 1]), atoi(params[counter + 2]));
+			counter += 3;
+		}
+	}
 	g.test();
-	g.add_edge(1, 2);
-	g.add_edge(2, 3);
-	g.add_edge(3, 4);
-	g.BFS();
+	print(g.find_ways());
+
+	//Graph g(5, 0, 4);
+	//g.add_edge(0, 1);
+	//g.add_edge(1, 2);
+	//g.add_edge(2, 3);]
+	//g.add_edge(3, 4);
+	//g.test();
+	//g.BFS();
 	
 	system("pause");
 	return 0;
