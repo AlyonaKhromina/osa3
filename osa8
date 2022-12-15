@@ -1,0 +1,182 @@
+#include <iostream>
+
+using namespace std;
+
+
+class Stack {
+private:
+	int* myStack;
+	int head = 0, inOps = 0, outOps = 0, size;
+	enum states { empty, full, ok };
+	states checkResult;
+	int toReturn;
+
+	states fullOrEmpty() {
+		if (inOps == outOps) {
+			return states::empty;
+		}
+		else if (inOps - outOps == size) {
+			return states::full;
+		}
+		else
+			return states::ok;
+	}
+
+	void translateHead() {
+		if (head > size)
+			head = 0;
+	}
+
+public:
+	Stack(int arraySize) {
+		size = arraySize;
+		myStack = new int[size];
+	}
+
+	~Stack() {
+		delete[] myStack;
+	}
+
+	bool is_empty() {
+		if (inOps == outOps) {
+			return true;
+		}
+		else
+			return false;
+	}
+
+	void add(int arg) {
+		translateHead();
+		checkResult = fullOrEmpty();
+		if (checkResult != states::full) {
+			inOps++;
+			myStack[head] = arg;
+			head++;
+		}
+	}
+
+	int out() {
+		checkResult = fullOrEmpty();
+		if (checkResult != states::empty) {
+			outOps++;
+			toReturn = myStack[head - 1];
+			myStack[head - 1] = 0;
+			head--;
+			return toReturn;
+		}
+		return -1;
+	}
+
+};
+
+class Graph {
+	int** matrix; 
+	bool* visited; 
+	int* ways;
+	int start, end;
+	int size; 
+
+public:
+	Graph(int N, int start, int end) { 
+		
+		matrix = new int*[N]; 
+		for (int j = 0; j < N; j++) {
+			int* temp = new int[N];
+			for (int i = 0; i < N; i++) {
+				temp[i] = 0;
+			}
+			matrix[j] = temp;
+		}
+		size = N;
+
+		visited = new bool[N]; 
+		for (int o = 0; o < N; o++) {
+			visited[o] = 0;
+		}
+		ways = new int[N]; 
+		for (int u = 0; u < N; u++) {
+			ways[u] = 0;
+		}
+
+		this->start = start;
+		this->end = end;
+	}
+
+	void add_edge(int from, int to) { 
+		matrix[from][to] = 1;
+	}
+
+	int* find_ways() {
+		Stack Que(size);
+		Que.add(start);
+		visited[start] = 1;
+		ways[start] = -1;
+		while (!Que.is_empty()) 
+		{
+			int unit = Que.out(); 
+			for (int i = 0; i < size; i++)
+			{
+				if ((visited[i] == 0) && (matrix[unit][i] == 1)) 
+				{ 
+					Que.add(i); 
+					ways[i] = unit;
+					visited[i] = 1; 
+				}
+			}
+		}
+		int dne = end;
+		int count = 0;
+		do {
+			count++;
+			dne = ways[dne];
+		} while (dne != ways[start]); 
+		int* to_return = new int[count + 1];
+		to_return[0] = count;
+		int i = 0;
+		to_return[i + 1] = end;
+		i++;
+		do {
+			to_return[i + 1] = ways[end];
+			i++;
+			end = ways[end];
+		} while (end != start);
+		return to_return;
+	}
+
+	void test() {
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				cout << "  " << matrix[i][j] << "  ";
+			}
+			cout << endl;
+		}
+	}
+};
+
+void print(int* arr) {
+	for (int i = arr[0]; i > 0; i--) {
+		cout << arr[i] << " ";
+	}
+	cout << endl << endl;
+}
+
+int main(int count, char** params)
+{
+
+	setlocale(LC_ALL, "");
+
+	Graph g(atoi(params[1]), atoi(params[2]), atoi(params[3]));
+
+	int counter = 4;
+	while (counter <= count - 1) {
+		if (string(params[counter]) == "add") {
+			g.add_edge(atoi(params[counter + 1]), atoi(params[counter + 2]));
+			counter += 3;
+		}
+	}
+	g.test();
+	print(g.find_ways());
+	
+	system("pause");
+	return 0;
+}
