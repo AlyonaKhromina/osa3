@@ -3,7 +3,7 @@
 using namespace std;
 
 
-class Stack {
+class Stack {// ТУТ СТЕК
 private:
 	int* myStack;
 	int head = 0, inOps = 0, outOps = 0, size;
@@ -11,7 +11,7 @@ private:
 	states checkResult;
 	int toReturn;
 
-	states fullOrEmpty() {
+	states fullOrEmpty() { // проверка, полный или пустой
 		if (inOps == outOps) {
 			return states::empty;
 		}
@@ -22,22 +22,22 @@ private:
 			return states::ok;
 	}
 
-	void translateHead() {
+	void translateHead() { // перемещает место для записи числа (голову)
 		if (head > size)
 			head = 0;
 	}
 
 public:
-	Stack(int arraySize) {
+	Stack(int arraySize) { // конструктор :)
 		size = arraySize;
 		myStack = new int[size];
 	}
 
-	~Stack() {
+	~Stack() { // деконструктор :(
 		delete[] myStack;
 	}
 
-	bool is_empty() {
+	bool is_empty() { // проверка стека на пустоту, костыль, ведь у нас функция уже есть, но пох, мне лень было переделывать
 		if (inOps == outOps) {
 			return true;
 		}
@@ -45,7 +45,7 @@ public:
 			return false;
 	}
 
-	void add(int arg) {
+	void add(int arg) { // добавление
 		translateHead();
 		checkResult = fullOrEmpty();
 		if (checkResult != states::full) {
@@ -55,7 +55,7 @@ public:
 		}
 	}
 
-	int out() {
+	int out() { // забор числа и его удаление 
 		checkResult = fullOrEmpty();
 		if (checkResult != states::empty) {
 			outOps++;
@@ -69,7 +69,7 @@ public:
 
 };
 
-class Graph {
+class Graph { // комменты по коду ниже смотри в прошлой работе
 	int** matrix; 
 	bool* visited; 
 	int* ways;
