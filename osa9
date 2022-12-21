@@ -1,0 +1,159 @@
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <string>
+#include <stack>
+using namespace std;
+
+//0, 1, 1, 0, 1
+//1, 0, 0, 1, 0
+//1, 0, 0, 0, 1
+//0, 1, 0, 0, 0
+//1, 0, 1, 0, 0
+
+class Graph
+{
+	int size;
+	bool* visited;
+	int* Vertex;
+	int start, end;
+	vector<vector<int>> matrix;
+
+
+	void file_input()
+	{
+		ifstream file;
+		file.open("C:/Users/Goose/source/repos/Graph.txt");
+		if (!file.is_open()) {
+			cout << "not open\n";
+		}
+		if (file.is_open())
+		{
+			cout << "opened\n";
+			int x_axis = 0;
+			int y_axis = 0;
+			while (y_axis < size)
+			{
+				string new_input = "";
+				file >> new_input;
+				if (new_input == "0" || new_input == "0,")
+				{
+					matrix[x_axis][y_axis] = 0;
+					x_axis++;
+					if (x_axis == size)
+					{
+						x_axis = 0;
+						y_axis++;
+					}
+				}
+				if (new_input == "1" || new_input == "1,")
+				{
+					matrix[x_axis][y_axis] = 1;
+					x_axis++;
+					if (x_axis == size)
+					{
+						x_axis = 0;
+						y_axis++;
+					}
+				}
+			}
+		}
+		file.close();
+	}
+
+	void clean()
+	{
+		for (int i = 0; i < size; i++)
+		{
+			visited[i] = false;
+			Vertex[i] = 0;
+		}
+	}
+
+	void logic_of_graph(int c)
+	{
+		visited[c] = true;
+		for (int i = 0; i < size; i++)
+		{
+			if (!visited[i] && matrix[c][i] != 0)
+			{
+				Vertex[i] = c;
+				logic_of_graph(i);
+			}
+		}
+	}
+
+	void temp()
+	{
+		Vertex[start] = start;
+		logic_of_graph(start);
+	}
+
+	vector<int> save_path()
+	{
+		vector<int> to_return;
+		int i = end;
+		while (i != start)
+		{
+			to_return.push_back(Vertex[i]);
+			i = Vertex[i];
+		}
+		reverse(to_return.begin(), to_return.end());
+		return to_return;
+	}
+	string parse_string()
+	{
+		vector<int> my_v = save_path();
+		string to_return;
+		for (int i = 0; i < my_v.size(); i++)
+		{
+			to_return += to_string(++my_v[i]) + " ";
+		}
+		to_return += to_string(++end);
+		return to_return;
+	}
+public:
+
+	Graph(int NumOfVer)
+	{
+		if (NumOfVer <= 0)
+		{
+			throw exception("Неправильно задан размер графа");
+		}
+		size = NumOfVer;
+		visited = new bool[size];
+		Vertex = new int[size];
+		matrix.resize(size);
+		for (int i = 0; i < size; i++)
+		{
+			matrix[i].resize(size);
+		}
+
+		file_input();
+		clean();
+
+	}
+
+	string FindingTheShortestPath(int start, int end)
+	{
+		this->start = start;
+		this->end = end;
+		if (start > size || start <0 || end > size || end < 0 || start == end)
+		{
+			throw exception("Неправильно заданы пункты");
+		}
+		temp();
+		return parse_string();
+	}
+};
+
+int main(int count, char** params)
+{
+	setlocale(LC_ALL, "");
+	int start = 0, end = 0, size = 0;
+	size = atoi(params[1]);
+	start = atoi(params[2]);
+	end = atoi(params[3]);
+	Graph G(size);
+	cout << G.FindingTheShortestPath(start - 1, end - 1);
+}
