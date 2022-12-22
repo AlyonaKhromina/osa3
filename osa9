@@ -5,7 +5,7 @@
 #include <stack>
 using namespace std;
 
-//0, 1, 1, 0, 1
+//0, 1, 1, 0, 1 так вышлядят данные в файлике
 //1, 0, 0, 1, 0
 //1, 0, 0, 0, 1
 //0, 1, 0, 0, 0
@@ -20,10 +20,10 @@ class Graph
 	vector<vector<int>> matrix;
 
 
-	void file_input()
+	void file_input() // читаем из файлика
 	{
 		ifstream file;
-		file.open("C:/Users/Goose/source/repos/Graph.txt");
+		file.open("C:/Users/Goose/source/repos/Graph.txt"); // путь к файлику
 		if (!file.is_open()) {
 			cout << "not open\n";
 		}
@@ -70,15 +70,15 @@ class Graph
 		}
 	}
 
-	void logic_of_graph(int c)
+	void logic_of_graph(int c) // основная функция расчёта
 	{
-		visited[c] = true;
+		visited[c] = true; // отмечаем точку, как посёщённую
 		for (int i = 0; i < size; i++)
 		{
-			if (!visited[i] && matrix[c][i] != 0)
+			if (!visited[i] && matrix[c][i] != 0) // если у это точки есть путь к непоещённым точкам
 			{
-				Vertex[i] = c;
-				logic_of_graph(i);
+				Vertex[i] = c; // записываем непосещённые точки
+				logic_of_graph(i); // запускаем эту же функцию для другой найдённой точки
 			}
 		}
 	}
@@ -147,7 +147,7 @@ public:
 	}
 };
 
-int main(int count, char** params)
+int main(int count, char** params) // аргументы 5 2 3 <количество точек> <откуда> <куда> 
 {
 	setlocale(LC_ALL, "");
 	int start = 0, end = 0, size = 0;
