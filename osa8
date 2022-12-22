@@ -3,7 +3,7 @@
 using namespace std;
 
 
-class Stack {// ТУТ СТЕК
+class Stack {// СТЕК
 private:
 	int* myStack;
 	int head = 0, inOps = 0, outOps = 0, size;
@@ -37,7 +37,7 @@ public:
 		delete[] myStack;
 	}
 
-	bool is_empty() { // проверка стека на пустоту, костыль, ведь у нас функция уже есть, но пох, мне лень было переделывать
+	bool is_empty() { // проверка стека на пустоту, костыль, ведь у нас функция уже есть
 		if (inOps == outOps) {
 			return true;
 		}
@@ -69,17 +69,17 @@ public:
 
 };
 
-class Graph { // комменты по коду ниже смотри в прошлой работе
-	int** matrix; 
-	bool* visited; 
-	int* ways;
-	int start, end;
-	int size; 
+class Graph { // 
+	int** matrix; // матрица смежности
+	bool* visited; // посещённые точки
+	int* ways; // пути, куда можем пойти
+	int start, end; // начальная и конечная точка
+	int size;  // размер матрицы
 
 public:
-	Graph(int N, int start, int end) { 
+	Graph(int N, int start, int end) {  // конструктор
 		
-		matrix = new int*[N]; 
+		matrix = new int*[N];  // создаем матрицу смежности
 		for (int j = 0; j < N; j++) {
 			int* temp = new int[N];
 			for (int i = 0; i < N; i++) {
@@ -89,11 +89,11 @@ public:
 		}
 		size = N;
 
-		visited = new bool[N]; 
+		visited = new bool[N]; // массив посещённых
 		for (int o = 0; o < N; o++) {
 			visited[o] = 0;
 		}
-		ways = new int[N]; 
+		ways = new int[N]; // массив путей
 		for (int u = 0; u < N; u++) {
 			ways[u] = 0;
 		}
@@ -102,25 +102,25 @@ public:
 		this->end = end;
 	}
 
-	void add_edge(int from, int to) { 
+	void add_edge(int from, int to) { // добавляет путь
 		matrix[from][to] = 1;
 	}
 
 	int* find_ways() {
 		Stack Que(size);
-		Que.add(start);
+		Que.add(start); // добавляем в очередь начальную точку
 		visited[start] = 1;
 		ways[start] = -1;
-		while (!Que.is_empty()) 
+		while (!Que.is_empty())  // пока очередь не пустая
 		{
-			int unit = Que.out(); 
+			int unit = Que.out();  // берём элемент из очереди
 			for (int i = 0; i < size; i++)
 			{
-				if ((visited[i] == 0) && (matrix[unit][i] == 1)) 
+				if ((visited[i] == 0) && (matrix[unit][i] == 1)) // есть ли связь и посещяли ли мы точку
 				{ 
-					Que.add(i); 
-					ways[i] = unit;
-					visited[i] = 1; 
+					Que.add(i); // добавляем в очередь
+					ways[i] = unit; // добавляем в путь нашу точку
+					visited[i] = 1; // теперь эта точка посещена
 				}
 			}
 		}
@@ -129,14 +129,14 @@ public:
 		do {
 			count++;
 			dne = ways[dne];
-		} while (dne != ways[start]); 
+		} while (dne != ways[start]); // высчитываем, сколько шагов нужно сделать до конечной точки
 		int* to_return = new int[count + 1];
 		to_return[0] = count;
 		int i = 0;
 		to_return[i + 1] = end;
 		i++;
 		do {
-			to_return[i + 1] = ways[end];
+			to_return[i + 1] = ways[end]; // записываем в массив точки, по которым мы прошли
 			i++;
 			end = ways[end];
 		} while (end != start);
